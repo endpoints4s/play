@@ -1,4 +1,4 @@
-package endpoints.play.server
+package endpoints.play.server.circe
 
 import io.circe.Json
 import play.api.http.{ContentTypes, Writeable}
