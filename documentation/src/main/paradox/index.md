@@ -11,15 +11,15 @@ Client and server backed by [Play framework](https://www.playframework.com/).
 The `Endpoints` interpreter fixes the `Endpoint[A, B]` type to a function from
 `A` to `Future[B]`:
 
-@@snip [Endpoints.scala](/play/client/src/main/scala/endpoints4s/play/client/Endpoints.scala) { #concrete-carrier-type }
+@@snip [Endpoints.scala](/client/src/main/scala/endpoints4s/play/client/Endpoints.scala) { #concrete-carrier-type }
 
 This means that, given the following endpoint definition:
 
-@@snip [EndpointsDocs.scala](/play/client/src/test/scala/endpoints4s/play/client/EndpointsDocs.scala) { #endpoint-definition }
+@@snip [EndpointsDocs.scala](/client/src/test/scala/endpoints4s/play/client/EndpointsDocs.scala) { #endpoint-definition }
 
 It can be invoked as follows:
 
-@@snip [EndpointsDocs.scala](/play/client/src/test/scala/endpoints4s/play/client/EndpointsDocs.scala) { #invocation }
+@@snip [EndpointsDocs.scala](/client/src/test/scala/endpoints4s/play/client/EndpointsDocs.scala) { #invocation }
 
 ## Server
 
@@ -35,16 +35,29 @@ value that can be integrated to your Play application.
 
 For instance, given the following endpoint definition:
 
-@@snip [EndpointsDocs.scala](/play/server/src/test/scala/endpoints4s/play/server/EndpointsDocs.scala) { #endpoint-definition }
+@@snip [EndpointsDocs.scala](/server/src/test/scala/endpoints4s/play/server/EndpointsDocs.scala) { #endpoint-definition }
 
 It can be implemented as follows:
 
-@@snip [EndpointsDocs.scala](/play/server/src/test/scala/endpoints4s/play/server/EndpointsDocs.scala) { #implementation }
+@@snip [EndpointsDocs.scala](/server/src/test/scala/endpoints4s/play/server/EndpointsDocs.scala) { #implementation }
 
 In practice, the routes are put in a class taking an `endpoints4s.play.server.PlayComponents`
 parameter. An HTTP server can then be started as in the following example:
 
-@@snip [Counter.scala](/documentation/examples/documented/src/main/scala/counter/Counter.scala) { #main-only }
+~~~ scala
+object Main {
+  // JVM entry point that starts the HTTP server
+  def main(args: Array[String]): Unit = {
+    val playConfig = ServerConfig(port = sys.props.get("http.port").map(_.toInt).orElse(Some(9000)))
+    NettyServer.fromRouterWithComponents(playConfig) { components =>
+      val playComponents = PlayComponents.fromBuiltInComponents(components)
+      new CounterServer(playComponents).routes
+        .orElse(new DocumentationServer(playComponents).routes)
+    }
+    ()
+  }
+}
+~~~
 
 ### `ChunkedEntities`
 
@@ -52,11 +65,11 @@ The `ChunkedEntities` interpreter fixes the type `Chunks[A]` to `akka.stream.sca
 
 For instance, given the following chunked endpoint definition:
 
-@@snip [ChunkedEntitiesDocs.scala](/play/server/src/test/scala/endpoints4s/play/server/ChunkedEntitiesDocs.scala) { #streamed-endpoint }
+@@snip [ChunkedEntitiesDocs.scala](/server/src/test/scala/endpoints4s/play/server/ChunkedEntitiesDocs.scala) { #streamed-endpoint }
 
 It can be implemented as follows:
 
-@@snip [ChunkedEntitiesDocs.scala](/play/server/src/test/scala/endpoints4s/play/server/ChunkedEntitiesDocs.scala) { #implementation }
+@@snip [ChunkedEntitiesDocs.scala](/server/src/test/scala/endpoints4s/play/server/ChunkedEntitiesDocs.scala) { #implementation }
 
 ### Error handling
 

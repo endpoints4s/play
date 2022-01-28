@@ -1,25 +1,39 @@
-import EndpointsSettings._
+import xerial.sbt.Sonatype.GitHubHosting
+import com.lightbend.paradox.markdown.Writer
 
-val `algebra-jvm` = LocalProject("algebraJVM")
-val `algebra-testkit-jvm` = LocalProject("algebra-testkitJVM")
-val `algebra-circe-jvm` = LocalProject("algebra-circeJVM")
-val `algebra-circe-testkit-jvm` = LocalProject("algebra-circe-testkitJVM")
-val `openapi-jvm` = LocalProject("openapiJVM")
-val `json-schema-circe-jvm` = LocalProject("json-schema-circeJVM")
-val `json-schema-generic-jvm` = LocalProject("json-schema-genericJVM")
-val `json-schema-playjson-jvm` = LocalProject("json-schema-playjsonJVM")
+val playVersion      = "2.8.13"
+val akkaActorVersion = "2.6.15"
+val circeVersion     = "0.14.1"
+
+inThisBuild(List(
+  versionPolicyIntention := Compatibility.None,
+  organization := "org.endpoints4s",
+  sonatypeProjectHosting := Some(
+    GitHubHosting("endpoints4s", "play", "julien@richard-foy.fr")
+  ),
+  homepage := Some(sonatypeProjectHosting.value.get.scmInfo.browseUrl),
+  licenses := Seq(
+    "MIT License" -> url("http://opensource.org/licenses/mit-license.php")
+  ),
+  developers := List(
+    Developer("julienrf", "Julien Richard-Foy", "julien@richard-foy.fr", url("http://julien.richard-foy.fr"))
+  ),
+  scalaVersion := "2.13.8",
+  crossScalaVersions := Seq("2.13.8", "3.0.2", "2.12.13"),
+  versionPolicyIgnoredInternalDependencyVersions := Some("^\\d+\\.\\d+\\.\\d+\\+\\d+".r)
+))
 
 val `play-server` =
   project
     .in(file("server"))
     .settings(
-      publishSettings,
-      `scala 2.12 to dotty`, // Note that we could support 2.11. Only our tests use circe (which has dropped 2.11)
       name := "play-server",
-      version := "4.0.0+n",
-      versionPolicyIntention := Compatibility.None,
+      publish / skip := scalaVersion.value.startsWith("3"), // Don’t publish Scala 3 artifacts for now because the algebra is not published for Scala 3
       libraryDependencies ++= Seq(
+        ("org.endpoints4s" %% "openapi" % "4.0.0").cross(CrossVersion.for3Use2_13),
         ("com.typesafe.play" %% "play-netty-server" % playVersion).cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "algebra-testkit" % "1.0.0" % Test).cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "algebra-circe-testkit" % "1.0.0" % Test).cross(CrossVersion.for3Use2_13),
         ("com.typesafe.play" %% "play-test" % playVersion % Test).cross(CrossVersion.for3Use2_13),
         ("com.typesafe.play" %% "play-ahc-ws" % playVersion % Test).cross(CrossVersion.for3Use2_13),
         // Override transitive dependencies of Play
@@ -36,37 +50,33 @@ val `play-server` =
         } else Nil
       }
     )
-    .dependsOn(
-      `algebra-jvm`,
-      `openapi-jvm`,
-      `algebra-testkit-jvm` % Test,
-      `algebra-circe-testkit-jvm` % Test
-    )
 
 val `play-server-circe` =
   project
     .in(file("server-circe"))
     .settings(
-      publishSettings,
-      `scala 2.12 to dotty`,
       name := "play-server-circe",
-      version := "4.0.0+n",
-      versionPolicyIntention := Compatibility.None,
-      libraryDependencies += "io.circe" %% "circe-parser" % circeVersion
+      publish / skip := scalaVersion.value.startsWith("3"), // Don’t publish Scala 3 artifacts for now because the algebra is not published for Scala 3
+      libraryDependencies ++= Seq(
+        "io.circe" %% "circe-parser" % circeVersion,
+        ("org.endpoints4s" %% "algebra-circe" % "2.0.0").cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "json-schema-circe" % "2.0.0").cross(CrossVersion.for3Use2_13)
+      )
     )
-    .dependsOn(`play-server`, `algebra-circe-jvm`, `json-schema-circe-jvm`)
+    .dependsOn(`play-server`)
 
 val `play-client` =
   project
     .in(file("client"))
     .settings(
-      publishSettings,
-      `scala 2.12 to dotty`,
       name := "play-client",
-      version := "4.0.0+n",
-      versionPolicyIntention := Compatibility.None,
+      publish / skip := scalaVersion.value.startsWith("3"), // Don’t publish Scala 3 artifacts for now because the algebra is not published for Scala 3
       libraryDependencies ++= Seq(
+        ("org.endpoints4s" %% "openapi" % "4.0.0").cross(CrossVersion.for3Use2_13),
         ("com.typesafe.play" %% "play-ahc-ws" % playVersion).cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "algebra-testkit" % "1.0.0" % Test).cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "algebra-circe-testkit" % "1.0.0" % Test).cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "json-schema-generic" % "1.6.0" % Test).cross(CrossVersion.for3Use2_13),
         // Override transitive dependencies of Play
         ("com.typesafe.akka" %% "akka-slf4j" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
         ("com.typesafe.akka" %% "akka-actor-typed" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
@@ -81,10 +91,55 @@ val `play-client` =
         } else Nil
       }
     )
-    .dependsOn(
-      `algebra-jvm`,
-      `openapi-jvm`,
-      `algebra-testkit-jvm` % Test,
-      `algebra-circe-testkit-jvm` % Test,
-      `json-schema-generic-jvm` % Test
+
+val documentation =
+  project.in(file("documentation"))
+    .enablePlugins(ParadoxMaterialThemePlugin, ParadoxPlugin, ParadoxSitePlugin, ScalaUnidocPlugin)
+    .settings(
+      publish / skip := true,
+      coverageEnabled := false,
+      autoAPIMappings := true,
+      Compile / paradoxMaterialTheme := {
+        val theme = (Compile / paradoxMaterialTheme).value
+        val repository =
+          (ThisBuild / sonatypeProjectHosting).value.get.scmInfo.browseUrl.toURI
+        theme
+          .withRepository(repository)
+          .withSocial(repository)
+          .withCustomStylesheet("snippets.css")
+      },
+      paradoxProperties ++= Map(
+        "version" -> version.value,
+        "scaladoc.base_url" -> s".../${(packageDoc / siteSubdirName).value}",
+        "github.base_url" -> s"${homepage.value.get}/blob/v${version.value}"
+      ),
+      paradoxDirectives += ((_: Writer.Context) =>
+        org.endpoints4s.paradox.coordinates.CoordinatesDirective
+        ),
+      ScalaUnidoc / unidoc / scalacOptions ++= Seq(
+        "-implicits",
+        "-diagrams",
+        "-groups",
+        "-doc-source-url",
+        s"${homepage.value.get}/blob/v${version.value}€{FILE_PATH}.scala",
+        "-sourcepath",
+        (ThisBuild / baseDirectory).value.absolutePath
+      ),
+      ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(
+        `play-server`, `play-server-circe`, `play-client`
+      ),
+      packageDoc / siteSubdirName := "api",
+      addMappingsToSiteDir(
+        ScalaUnidoc / packageDoc / mappings,
+        packageDoc / siteSubdirName
+      )
     )
+
+val play =
+  project.in(file("."))
+    .aggregate(`play-server`, `play-server-circe`, `play-client`, documentation)
+    .settings(
+      publish / skip := true
+    )
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
