@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0
       - uses: olafurpg/setup-scala@v13
       - uses: coursier/cache-action@v6.3
-      - run: docker run -d -p 8080:8080 julienrf/endpoints4s-stubserver:1.0.1
+      - run: docker run -d -p 8080:8080 julienrf/endpoints4s-stubserver:1.1.0
       - name: Scala 2.12 tests
         run: sbt "++ 2.12.15 test"
       - name: Scala 3 tests
