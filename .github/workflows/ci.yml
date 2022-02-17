@@ -20,7 +20,7 @@ jobs:
       - name: Scala 2.12 tests
         run: sbt "++ 2.12.15 test"
       - name: Scala 3 tests
-        run: sbt "++ 3.0.2 test"
+        run: sbt "++ 3.0.2 compile"
       - name: Scala 2.13 tests
         run: |
           sbt "++ 2.13.7 ;coverage; test; coverageReport; coverageAggregate"
