@@ -30,10 +30,10 @@ val `play-server` =
       name := "play-server",
       publish / skip := scalaVersion.value.startsWith("3"), // Don’t publish Scala 3 artifacts for now because the algebra is not published for Scala 3
       libraryDependencies ++= Seq(
-        ("org.endpoints4s" %% "openapi" % "4.0.0").cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "openapi" % "4.1.0").cross(CrossVersion.for3Use2_13),
         ("com.typesafe.play" %% "play-netty-server" % playVersion).cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "algebra-testkit" % "1.0.0" % Test).cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "algebra-circe-testkit" % "1.0.0" % Test).cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "algebra-testkit" % "2.0.0" % Test).cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "algebra-circe-testkit" % "2.0.0" % Test).cross(CrossVersion.for3Use2_13),
         ("com.typesafe.play" %% "play-test" % playVersion % Test).cross(CrossVersion.for3Use2_13),
         ("com.typesafe.play" %% "play-ahc-ws" % playVersion % Test).cross(CrossVersion.for3Use2_13),
         // Override transitive dependencies of Play
@@ -59,8 +59,8 @@ val `play-server-circe` =
       publish / skip := scalaVersion.value.startsWith("3"), // Don’t publish Scala 3 artifacts for now because the algebra is not published for Scala 3
       libraryDependencies ++= Seq(
         "io.circe" %% "circe-parser" % circeVersion,
-        ("org.endpoints4s" %% "algebra-circe" % "2.0.0").cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "json-schema-circe" % "2.0.0").cross(CrossVersion.for3Use2_13)
+        ("org.endpoints4s" %% "algebra-circe" % "2.1.0").cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "json-schema-circe" % "2.1.0").cross(CrossVersion.for3Use2_13)
       )
     )
     .dependsOn(`play-server`)
@@ -72,11 +72,11 @@ val `play-client` =
       name := "play-client",
       publish / skip := scalaVersion.value.startsWith("3"), // Don’t publish Scala 3 artifacts for now because the algebra is not published for Scala 3
       libraryDependencies ++= Seq(
-        ("org.endpoints4s" %% "openapi" % "4.0.0").cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "openapi" % "4.1.0").cross(CrossVersion.for3Use2_13),
         ("com.typesafe.play" %% "play-ahc-ws" % playVersion).cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "algebra-testkit" % "1.0.0" % Test).cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "algebra-circe-testkit" % "1.0.0" % Test).cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "json-schema-generic" % "1.6.0" % Test).cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "algebra-testkit" % "2.0.0" % Test).cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "algebra-circe-testkit" % "2.0.0" % Test).cross(CrossVersion.for3Use2_13),
+        ("org.endpoints4s" %% "json-schema-generic" % "1.7.0" % Test).cross(CrossVersion.for3Use2_13),
         // Override transitive dependencies of Play
         ("com.typesafe.akka" %% "akka-slf4j" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
         ("com.typesafe.akka" %% "akka-actor-typed" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
