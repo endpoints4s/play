@@ -6,7 +6,7 @@ val akkaActorVersion = "2.6.15"
 val circeVersion     = "0.14.1"
 
 inThisBuild(List(
-  versionPolicyIntention := Compatibility.None,
+  versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
   organization := "org.endpoints4s",
   sonatypeProjectHosting := Some(
     GitHubHosting("endpoints4s", "play", "julien@richard-foy.fr")
