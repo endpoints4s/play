@@ -40,15 +40,7 @@ val `play-server` =
         ("com.typesafe.akka" %% "akka-slf4j" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
         ("com.typesafe.akka" %% "akka-actor-typed" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
         ("com.typesafe.akka" %% "akka-serialization-jackson" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13)
-      ),
-      excludeDependencies ++= {
-        if (scalaBinaryVersion.value.startsWith("3")) {
-          List(
-            ExclusionRule("org.scala-lang.modules", "scala-xml_3"),
-            ExclusionRule("org.scala-lang.modules", "scala-collection-compat_2.13")
-          )
-        } else Nil
-      }
+      )
     )
 
 val `play-server-circe` =
@@ -58,7 +50,7 @@ val `play-server-circe` =
       name := "play-server-circe",
       publish / skip := scalaVersion.value.startsWith("3"), // Don’t publish Scala 3 artifacts for now because the algebra is not published for Scala 3
       libraryDependencies ++= Seq(
-        "io.circe" %% "circe-parser" % circeVersion,
+        ("io.circe" %% "circe-parser" % circeVersion).cross(CrossVersion.for3Use2_13),
         ("org.endpoints4s" %% "algebra-circe" % "2.1.0").cross(CrossVersion.for3Use2_13),
         ("org.endpoints4s" %% "json-schema-circe" % "2.1.0").cross(CrossVersion.for3Use2_13)
       )
@@ -81,15 +73,7 @@ val `play-client` =
         ("com.typesafe.akka" %% "akka-slf4j" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
         ("com.typesafe.akka" %% "akka-actor-typed" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
         ("com.typesafe.akka" %% "akka-serialization-jackson" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13)
-      ),
-      excludeDependencies ++= {
-        if (scalaBinaryVersion.value.startsWith("3")) {
-          List(
-            ExclusionRule("org.scala-lang.modules", "scala-xml_3"),
-            ExclusionRule("org.scala-lang.modules", "scala-collection-compat_2.13")
-          )
-        } else Nil
-      }
+      )
     )
 
 val documentation =
