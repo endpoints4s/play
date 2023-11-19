@@ -1,0 +1,18 @@
+target/
+.idea/
+ci/secring.asc
+ci/travis-key
+ci/secrets.tar
+node_modules/
+*.iml
+.metals/
+.bloop/
+.vscode/
+.bsp/
+metals.sbt
+project/metals.sbt
+
+#direnv, niv and lorri
+.envrc
+shell.nix
+nix
