@@ -10,7 +10,7 @@ object CoordinatesDirective extends InlineDirective("coordinates") {
     val artifact = node.contents
     new ExpLinkNode(
       s"Artifact $artifact",
-      s"https://index.scala-lang.org/endpoints4s/scalaj/$artifact",
+      s"https://index.scala-lang.org/endpoints4s/play/$artifact",
       new ExpImageNode(
         "Artifact coordinates",
         s"https://img.shields.io/maven-central/v/org.endpoints4s/${artifact}_$binarySuffix?label=$artifact&style=for-the-badge",
