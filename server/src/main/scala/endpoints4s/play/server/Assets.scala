@@ -1,7 +1,7 @@
 package endpoints4s.play.server
 
-import akka.stream.scaladsl.{Source, StreamConverters}
-import akka.util.ByteString
+import org.apache.pekko.stream.scaladsl.{Source, StreamConverters}
+import org.apache.pekko.util.ByteString
 import endpoints4s.{Invalid, Valid, Validated, algebra}
 import endpoints4s.algebra.Documentation
 import play.api.http.{ContentTypes, HttpEntity}

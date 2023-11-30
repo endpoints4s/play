@@ -1,14 +1,13 @@
 package endpoints4s.play.server
 
 import java.net.ServerSocket
-
-import akka.stream.scaladsl.Source
+import org.apache.pekko.stream.scaladsl.Source
 import endpoints4s.{Invalid, Valid}
 import endpoints4s.algebra.server.{
   BasicAuthenticationTestSuite,
+  ChunkedJsonEntitiesTestSuite,
   DecodedUrl,
   EndpointsTestSuite,
-  ChunkedJsonEntitiesTestSuite,
   SumTypedEntitiesTestSuite,
   TextEntitiesTestSuite
 }

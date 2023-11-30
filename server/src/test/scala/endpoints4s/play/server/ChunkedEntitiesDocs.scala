@@ -1,6 +1,6 @@
 package endpoints4s.play.server
 
-import akka.stream.scaladsl.Source
+import org.apache.pekko.stream.scaladsl.Source
 import endpoints4s.algebra
 
 import scala.concurrent.duration.DurationInt
@@ -14,7 +14,7 @@ trait ChunkedEntitiesDefinitions extends algebra.ChunkedEntities {
 
 trait ChunkedEntitiesDocs extends ChunkedEntitiesDefinitions with ChunkedEntities {
   //#implementation
-  import akka.stream.scaladsl.FileIO
+  import org.apache.pekko.stream.scaladsl.FileIO
   import java.nio.file.Paths
 
   val logoHandler =
