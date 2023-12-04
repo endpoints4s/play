@@ -3,7 +3,7 @@ package endpoints4s.play.server
 import java.util.Base64
 import endpoints4s.algebra.BasicAuthentication.Credentials
 import endpoints4s.algebra.Documentation
-import endpoints4s.{Tupler, Valid, Validated, algebra}
+import endpoints4s.{Invalid, Tupler, Valid, Validated, algebra}
 import play.api.http.HeaderNames
 import play.api.http.HeaderNames.AUTHORIZATION
 import play.api.mvc.{RequestHeader, Results}
@@ -71,19 +71,31 @@ trait BasicAuthentication extends algebra.BasicAuthentication with EndpointsWith
             Valid(tuplerUEHC(tuplerUE(urlData, entityData), tuplerHC(h, credentials)))
         }
       def matchRequest(requestHeader: RequestHeader): Option[RequestEntity[Out]] = {
-        matchRequestAndParseHeaders(requestHeader) {
-          case (_, (_, None /* credentials */ )) =>
-            requestEntityOf(
-              Left(
-                Results.Unauthorized
-                  .withHeaders(HeaderNames.WWW_AUTHENTICATE -> "Basic realm=Realm")
+        if (method.matches(requestHeader)) {
+          headers(requestHeader.headers) match {
+            case inv: Invalid => Some(requestEntityOf(Left(handleClientErrors(inv))))
+            case Valid((_, None /* credentials */ )) =>
+              Some(
+                requestEntityOf(
+                  Left(
+                    Results.Unauthorized
+                      .withHeaders(HeaderNames.WWW_AUTHENTICATE -> "Basic realm=Realm")
+                  )
+                )
               )
-            )
-          case (urlData, (headersData, Some(credentials))) =>
-            requestEntityMap(entity) { entityData =>
-              tuplerUEHC(tuplerUE(urlData, entityData), tuplerHC(headersData, credentials))
-            }
-        }
+            case Valid((headersData, Some(credentials))) =>
+              url.decodeUrl(requestHeader).map {
+                case inv: Invalid => requestEntityOf(Left(handleClientErrors(inv)))
+                case Valid(urlData) =>
+                  requestEntityMap(entity) { entityData =>
+                    tuplerUEHC(
+                      tuplerUE(urlData, entityData),
+                      tuplerHC(headersData, credentials)
+                    )
+                  }
+              }
+          }
+        } else None
       }
       def urlData(a: Out): U = {
         val (ue, hc) = tuplerUEHC.unapply(a)
