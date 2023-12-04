@@ -5,7 +5,7 @@ val playVersion      = "3.0.0"
 val circeVersion     = "0.14.6"
 
 inThisBuild(List(
-  versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
+  versionPolicyIntention := Compatibility.None, //todo revert after release
   organization := "org.endpoints4s",
   sonatypeProjectHosting := Some(
     GitHubHosting("endpoints4s", "play", "julien@richard-foy.fr")
