@@ -71,31 +71,29 @@ trait BasicAuthentication extends algebra.BasicAuthentication with EndpointsWith
             Valid(tuplerUEHC(tuplerUE(urlData, entityData), tuplerHC(h, credentials)))
         }
       def matchRequest(requestHeader: RequestHeader): Option[RequestEntity[Out]] = {
-        if (method.matches(requestHeader)) {
-          headers(requestHeader.headers) match {
-            case inv: Invalid => Some(requestEntityOf(Left(handleClientErrors(inv))))
-            case Valid((_, None /* credentials */ )) =>
-              Some(
-                requestEntityOf(
-                  Left(
-                    Results.Unauthorized
-                      .withHeaders(HeaderNames.WWW_AUTHENTICATE -> "Basic realm=Realm")
-                  )
+        for {
+          uh <- parseRequestAndHeaders(requestHeader)
+          credentials = basicAuthenticationHeader(requestHeader.headers)
+          result = credentials match {
+            case Valid(Some(credentials)) =>
+              uh.fold(
+                { case (uh, (headersData, _)) =>
+                  requestEntityMap(entity) { entityData =>
+                    tuplerUEHC(tuplerUE(uh, entityData), tuplerHC(headersData, credentials))
+                  }
+                },
+                invalid => requestEntityOf(Left(handleClientErrors(Invalid(invalid))))
+              )
+            case Valid(None) =>
+              requestEntityOf(
+                Left(
+                  Results.Unauthorized
+                    .withHeaders(HeaderNames.WWW_AUTHENTICATE -> "Basic realm=Realm")
                 )
               )
-            case Valid((headersData, Some(credentials))) =>
-              url.decodeUrl(requestHeader).map {
-                case inv: Invalid => requestEntityOf(Left(handleClientErrors(inv)))
-                case Valid(urlData) =>
-                  requestEntityMap(entity) { entityData =>
-                    tuplerUEHC(
-                      tuplerUE(urlData, entityData),
-                      tuplerHC(headersData, credentials)
-                    )
-                  }
-              }
+            case invalid: Invalid => requestEntityOf(Left(handleClientErrors(invalid)))
           }
-        } else None
+        } yield result
       }
       def urlData(a: Out): U = {
         val (ue, hc) = tuplerUEHC.unapply(a)

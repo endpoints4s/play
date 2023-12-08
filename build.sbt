@@ -3,6 +3,16 @@ import com.lightbend.paradox.markdown.Writer
 
 val playVersion      = "3.0.0"
 val circeVersion     = "0.14.6"
+val testkitVersion   = "6.0.0"
+val pekko            = {
+  val pekkoVersion = "1.0.2"
+  List(
+    "org.apache.pekko" %% "pekko-actor" % pekkoVersion,
+    "org.apache.pekko" %% "pekko-slf4j" % pekkoVersion,
+    "org.apache.pekko" %% "pekko-serialization-jackson" % pekkoVersion,
+    "org.apache.pekko" %% "pekko-actor-typed" % pekkoVersion,
+  )
+}
 
 inThisBuild(List(
   versionPolicyIntention := Compatibility.None, //todo revert after release
@@ -27,13 +37,12 @@ val `play-server` =
     .in(file("server"))
     .settings(
       name := "play-server",
-      libraryDependencies ++= Seq(
+      libraryDependencies ++= pekko ++ Seq(
         "org.endpoints4s" %% "openapi" % "4.4.0",
         "org.playframework" %% "play" % playVersion,
 
         "org.playframework" %% "play-netty-server" % playVersion % Test,
-        "org.endpoints4s" %% "algebra-testkit" % "5.0.0" % Test,
-        "org.endpoints4s" %% "algebra-circe-testkit" % "5.0.0" % Test,
+        "org.endpoints4s" %% "algebra-circe-testkit" % testkitVersion % Test,
         "org.playframework" %% "play-test" % playVersion % Test,
         "org.playframework" %% "play-ahc-ws" % playVersion % Test,
       )
@@ -57,12 +66,11 @@ val `play-client` =
     .in(file("client"))
     .settings(
       name := "play-client",
-      libraryDependencies ++= Seq(
+      libraryDependencies ++= pekko ++ Seq(
         "org.endpoints4s" %% "openapi" % "4.4.0",
         "org.playframework" %% "play-ahc-ws" % playVersion,
 
-        "org.endpoints4s" %% "algebra-testkit" % "5.0.0" % Test,
-        "org.endpoints4s" %% "algebra-circe-testkit" % "5.0.0" % Test,
+        "org.endpoints4s" %% "algebra-circe-testkit" % testkitVersion % Test,
         "org.endpoints4s" %% "json-schema-generic" % "1.11.0" % Test,
       )
     )

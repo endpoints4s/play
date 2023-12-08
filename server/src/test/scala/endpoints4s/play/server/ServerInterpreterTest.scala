@@ -12,6 +12,7 @@ import endpoints4s.algebra.server.{
   TextEntitiesTestSuite
 }
 import play.api.Mode
+import play.api.mvc.{Handler, RequestHeader}
 import play.api.routing.Router
 import play.api.test.FakeRequest
 import play.core.server.{DefaultNettyServerComponents, NettyServer, ServerConfig}
@@ -69,19 +70,26 @@ class ServerInterpreterTest
       serverApi.routesFromEndpoints(endpoint.implementedByAsync(logic))
     )(runTests)
 
+  def serveManyEndpoints(endpoints: EndpointWithImplementation*)(runTests: Int => Unit): Unit = {
+    serveRoutes(
+      serverApi.routesFromEndpoints(endpoints.map(e => e.endpoint.implementedBy(e.impl)): _*)
+    )(runTests)
+  }
+
+  val port = {
+    val socket = new ServerSocket(0)
+    try socket.getLocalPort
+    finally if (socket != null) socket.close()
+  }
+  val config = ServerConfig(mode = Mode.Test, port = Some(port))
+  var routes: PartialFunction[RequestHeader, Handler] = { case _ =>
+    ???
+  }
+  val server = NettyServer.fromRouterWithComponents(config)(_ => routes)
+
   def serveRoutes(routes: Router.Routes)(runTests: Int => Unit): Unit = {
-    val port = {
-      val socket = new ServerSocket(0)
-      try socket.getLocalPort
-      finally if (socket != null) socket.close()
-    }
-    val config = ServerConfig(mode = Mode.Test, port = Some(port))
-    val server = NettyServer.fromRouterWithComponents(config)(_ => routes)
-    try {
-      runTests(port)
-    } finally {
-      server.stop()
-    }
+    this.routes = routes
+    runTests(port)
   }
 
   def decodeUrl[A](url: serverApi.Url[A])(rawValue: String): DecodedUrl[A] = {
@@ -93,4 +101,7 @@ class ServerInterpreterTest
     }
   }
 
+  override protected def afterAll(): Unit = {
+    server.stop()
+  }
 }
