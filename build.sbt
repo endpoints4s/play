@@ -38,7 +38,7 @@ val `play-server` =
     .settings(
       name := "play-server",
       libraryDependencies ++= pekko ++ Seq(
-        "org.endpoints4s" %% "openapi" % "4.4.0",
+        "org.endpoints4s" %% "openapi" % "4.5.1",
         "org.playframework" %% "play" % playVersion,
 
         "org.playframework" %% "play-netty-server" % playVersion % Test,
@@ -67,11 +67,11 @@ val `play-client` =
     .settings(
       name := "play-client",
       libraryDependencies ++= pekko ++ Seq(
-        "org.endpoints4s" %% "openapi" % "4.4.0",
+        "org.endpoints4s" %% "openapi" % "4.5.1",
         "org.playframework" %% "play-ahc-ws" % playVersion,
 
         "org.endpoints4s" %% "algebra-circe-testkit" % testkitVersion % Test,
-        "org.endpoints4s" %% "json-schema-generic" % "1.11.0" % Test,
+        "org.endpoints4s" %% "json-schema-generic" % "1.11.1" % Test,
       )
     )
 
