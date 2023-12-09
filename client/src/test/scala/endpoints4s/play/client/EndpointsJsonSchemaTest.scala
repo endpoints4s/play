@@ -22,9 +22,9 @@ class TestJsonSchemaClient(address: String, wsClient: WSClient)(implicit
 
 class EndpointsJsonSchemaTest extends client.JsonTestSuite[TestJsonSchemaClient] {
 
-  val wsClient = new WsTestClient.InternalWSClient("http", stubServerPort)
+  val wsClient = new WsTestClient.InternalWSClient("http", stubServerPortHTTP)
   val client: TestJsonSchemaClient =
-    new TestJsonSchemaClient(s"http://localhost:$stubServerPort", wsClient)
+    new TestJsonSchemaClient(s"http://localhost:$stubServerPortHTTP", wsClient)
 
   def call[Req, Resp](
       endpoint: client.Endpoint[Req, Resp],

@@ -28,9 +28,9 @@ class EndpointsTest
     with client.SumTypedEntitiesTestSuite[TestClient]
     with client.TextEntitiesTestSuite[TestClient] {
 
-  val wsClient = new WsTestClient.InternalWSClient("http", stubServerPort)
+  val wsClient = new WsTestClient.InternalWSClient("http", stubServerPortHTTP)
   val client: TestClient =
-    new TestClient(s"http://localhost:$stubServerPort", wsClient)
+    new TestClient(s"http://localhost:$stubServerPortHTTP", wsClient)
 
   def call[Req, Resp](
       endpoint: client.Endpoint[Req, Resp],

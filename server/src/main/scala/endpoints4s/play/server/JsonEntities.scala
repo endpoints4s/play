@@ -1,6 +1,6 @@
 package endpoints4s.play.server
 
-import akka.util.ByteString
+import org.apache.pekko.util.ByteString
 import endpoints4s.{Codec, Decoder, Encoder, Invalid, algebra}
 import play.api.mvc.RequestHeader
 import play.api.http.{ContentTypes, Writeable}

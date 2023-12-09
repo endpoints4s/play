@@ -152,6 +152,22 @@ trait EndpointsWithCustomErrors
       */
     final def encode(a: A): Call = Call(method.value, url.encodeUrl(urlData(a)))
 
+    /** @return Parsed and validated request data.
+      */
+    protected final def parseRequestAndHeaders(
+        requestHeader: RequestHeader
+    ): Option[Validated[(UrlData, HeadersData)]] = {
+      // Check that the incoming request matches the method and URL of this request description
+      val maybeValidatedUrlData =
+        (if (method.matches(requestHeader)) Some(()) else None)
+          .zip(url.decodeUrl(requestHeader))
+
+      // If the incoming request matches the method and URL of this request description, parse the headers
+      maybeValidatedUrlData.map { case (_, validatedUrlData) =>
+        validatedUrlData.zip(headers(requestHeader.headers))
+      }
+    }
+
     /** @return If the incoming `requestHeader` match this request description (the
       *         method and URL), validate the request URL parameters and headers.
       *         Otherwise, returns `None`.
@@ -159,18 +175,7 @@ trait EndpointsWithCustomErrors
     protected final def matchRequestAndParseHeaders(
         requestHeader: RequestHeader
     )(entity: (UrlData, HeadersData) => RequestEntity[A]): Option[RequestEntity[A]] = {
-      // Check that the incoming request matches the method and URL of this request description
-      val maybeValidatedUrlData =
-        (if (method.matches(requestHeader)) Some(()) else None)
-          .zip(url.decodeUrl(requestHeader))
-          .headOption
-
-      // If the incoming request matches the method and URL of this request description, parse the headers
-      val maybeValidatedUrlAndHeadersData: Option[Validated[(UrlData, HeadersData)]] =
-        maybeValidatedUrlData.map { case (_, validatedUrlData) =>
-          validatedUrlData.zip(headers(requestHeader.headers))
-        }
-
+      val maybeValidatedUrlAndHeadersData = parseRequestAndHeaders(requestHeader)
       maybeValidatedUrlAndHeadersData.map {
         case inv: Invalid                  => requestEntityOf(Left(handleClientErrors(inv)))
         case Valid((urlData, headersData)) => entity(urlData, headersData)

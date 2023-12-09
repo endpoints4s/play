@@ -1,10 +1,10 @@
 package endpoints4s.play.server
 
-import akka.NotUsed
-import akka.stream.scaladsl.Flow
-import akka.stream.scaladsl.{Framing => AkkaFraming}
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
+import org.apache.pekko.NotUsed
+import org.apache.pekko.stream.scaladsl.Flow
+import org.apache.pekko.stream.scaladsl.{Framing => pekkoFraming}
+import org.apache.pekko.stream.scaladsl.Source
+import org.apache.pekko.util.ByteString
 import endpoints4s.algebra
 import play.api.http.{ContentTypes, HttpChunk, HttpEntity}
 import play.api.libs.streams.Accumulator
@@ -113,7 +113,7 @@ trait ChunkedJsonEntities
 
   override lazy val newLineDelimiterFraming: Framing = new Framing(
     Flow[ByteString].via(
-      AkkaFraming.delimiter(
+      pekkoFraming.delimiter(
         ByteString("\n"),
         maximumFrameLength = Int.MaxValue,
         allowTruncation = true

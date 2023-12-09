@@ -1,12 +1,21 @@
 import xerial.sbt.Sonatype.GitHubHosting
 import com.lightbend.paradox.markdown.Writer
 
-val playVersion      = "2.8.13"
-val akkaActorVersion = "2.6.15"
-val circeVersion     = "0.14.1"
+val playVersion      = "3.0.0"
+val circeVersion     = "0.14.6"
+val testkitVersion   = "6.0.0"
+val pekko            = {
+  val pekkoVersion = "1.0.2"
+  List(
+    "org.apache.pekko" %% "pekko-actor" % pekkoVersion,
+    "org.apache.pekko" %% "pekko-slf4j" % pekkoVersion,
+    "org.apache.pekko" %% "pekko-serialization-jackson" % pekkoVersion,
+    "org.apache.pekko" %% "pekko-actor-typed" % pekkoVersion,
+  )
+}
 
 inThisBuild(List(
-  versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
+  versionPolicyIntention := Compatibility.None, //todo revert after release
   organization := "org.endpoints4s",
   sonatypeProjectHosting := Some(
     GitHubHosting("endpoints4s", "play", "julien@richard-foy.fr")
@@ -18,8 +27,8 @@ inThisBuild(List(
   developers := List(
     Developer("julienrf", "Julien Richard-Foy", "julien@richard-foy.fr", url("http://julien.richard-foy.fr"))
   ),
-  scalaVersion := "2.13.8",
-  crossScalaVersions := Seq("2.13.8", "3.0.2", "2.12.13"),
+  scalaVersion := "2.13.12",
+  crossScalaVersions := Seq(scalaVersion.value, "3.3.1"),
   versionPolicyIgnoredInternalDependencyVersions := Some("^\\d+\\.\\d+\\.\\d+\\+\\d+".r)
 ))
 
@@ -28,18 +37,14 @@ val `play-server` =
     .in(file("server"))
     .settings(
       name := "play-server",
-      publish / skip := scalaVersion.value.startsWith("3"), // Don’t publish Scala 3 artifacts for now because the algebra is not published for Scala 3
-      libraryDependencies ++= Seq(
-        ("org.endpoints4s" %% "openapi" % "4.1.0").cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.play" %% "play-netty-server" % playVersion).cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "algebra-testkit" % "2.0.0" % Test).cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "algebra-circe-testkit" % "2.0.0" % Test).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.play" %% "play-test" % playVersion % Test).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.play" %% "play-ahc-ws" % playVersion % Test).cross(CrossVersion.for3Use2_13),
-        // Override transitive dependencies of Play
-        ("com.typesafe.akka" %% "akka-slf4j" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.akka" %% "akka-actor-typed" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.akka" %% "akka-serialization-jackson" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13)
+      libraryDependencies ++= pekko ++ Seq(
+        "org.endpoints4s" %% "openapi" % "4.4.0",
+        "org.playframework" %% "play" % playVersion,
+
+        "org.playframework" %% "play-netty-server" % playVersion % Test,
+        "org.endpoints4s" %% "algebra-circe-testkit" % testkitVersion % Test,
+        "org.playframework" %% "play-test" % playVersion % Test,
+        "org.playframework" %% "play-ahc-ws" % playVersion % Test,
       )
     )
 
@@ -48,11 +53,10 @@ val `play-server-circe` =
     .in(file("server-circe"))
     .settings(
       name := "play-server-circe",
-      publish / skip := scalaVersion.value.startsWith("3"), // Don’t publish Scala 3 artifacts for now because the algebra is not published for Scala 3
       libraryDependencies ++= Seq(
-        ("io.circe" %% "circe-parser" % circeVersion).cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "algebra-circe" % "2.1.0").cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "json-schema-circe" % "2.1.0").cross(CrossVersion.for3Use2_13)
+        "io.circe" %% "circe-parser" % circeVersion,
+        "org.endpoints4s" %% "algebra-circe" % "2.5.0",
+        "org.endpoints4s" %% "json-schema-circe" % "2.5.0",
       )
     )
     .dependsOn(`play-server`)
@@ -62,17 +66,12 @@ val `play-client` =
     .in(file("client"))
     .settings(
       name := "play-client",
-      publish / skip := scalaVersion.value.startsWith("3"), // Don’t publish Scala 3 artifacts for now because the algebra is not published for Scala 3
-      libraryDependencies ++= Seq(
-        ("org.endpoints4s" %% "openapi" % "4.1.0").cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.play" %% "play-ahc-ws" % playVersion).cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "algebra-testkit" % "2.0.0" % Test).cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "algebra-circe-testkit" % "2.0.0" % Test).cross(CrossVersion.for3Use2_13),
-        ("org.endpoints4s" %% "json-schema-generic" % "1.7.0" % Test).cross(CrossVersion.for3Use2_13),
-        // Override transitive dependencies of Play
-        ("com.typesafe.akka" %% "akka-slf4j" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.akka" %% "akka-actor-typed" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.akka" %% "akka-serialization-jackson" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13)
+      libraryDependencies ++= pekko ++ Seq(
+        "org.endpoints4s" %% "openapi" % "4.4.0",
+        "org.playframework" %% "play-ahc-ws" % playVersion,
+
+        "org.endpoints4s" %% "algebra-circe-testkit" % testkitVersion % Test,
+        "org.endpoints4s" %% "json-schema-generic" % "1.11.0" % Test,
       )
     )
 
