@@ -3,9 +3,9 @@ import com.lightbend.paradox.markdown.Writer
 
 val playVersion      = "3.0.0"
 val circeVersion     = "0.14.6"
-val testkitVersion   = "6.0.0"
+val testkitVersion   = "7.0.1"
 val pekko            = {
-  val pekkoVersion = "1.0.2"
+  val pekkoVersion = "1.0.3"
   List(
     "org.apache.pekko" %% "pekko-actor" % pekkoVersion,
     "org.apache.pekko" %% "pekko-slf4j" % pekkoVersion,
@@ -38,7 +38,7 @@ val `play-server` =
     .settings(
       name := "play-server",
       libraryDependencies ++= pekko ++ Seq(
-        "org.endpoints4s" %% "openapi" % "4.5.1",
+        "org.endpoints4s" %% "openapi" % "5.0.1",
         "org.playframework" %% "play" % playVersion,
 
         "org.playframework" %% "play-netty-server" % playVersion % Test,
@@ -55,8 +55,8 @@ val `play-server-circe` =
       name := "play-server-circe",
       libraryDependencies ++= Seq(
         "io.circe" %% "circe-parser" % circeVersion,
-        "org.endpoints4s" %% "algebra-circe" % "2.5.0",
-        "org.endpoints4s" %% "json-schema-circe" % "2.5.0",
+        "org.endpoints4s" %% "algebra-circe" % "2.6.1",
+        "org.endpoints4s" %% "json-schema-circe" % "2.6.1",
       )
     )
     .dependsOn(`play-server`)
@@ -67,11 +67,11 @@ val `play-client` =
     .settings(
       name := "play-client",
       libraryDependencies ++= pekko ++ Seq(
-        "org.endpoints4s" %% "openapi" % "4.5.1",
+        "org.endpoints4s" %% "openapi" % "5.0.1",
         "org.playframework" %% "play-ahc-ws" % playVersion,
 
         "org.endpoints4s" %% "algebra-circe-testkit" % testkitVersion % Test,
-        "org.endpoints4s" %% "json-schema-generic" % "1.11.1" % Test,
+        "org.endpoints4s" %% "json-schema-generic" % "1.12.1" % Test,
       )
     )
 
