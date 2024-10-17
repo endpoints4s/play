@@ -15,7 +15,7 @@ val pekko            = {
 }
 
 inThisBuild(List(
-  versionPolicyIntention := Compatibility.None, //todo revert after release
+  versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
   organization := "org.endpoints4s",
   sonatypeProjectHosting := Some(
     GitHubHosting("endpoints4s", "play", "julien@richard-foy.fr")
