@@ -147,7 +147,7 @@ endpoints4s/play
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 6.0.0
+<i class="md-icon" title="Version">label_outline</i> 7.0.0
 </label>
 </li>
 </ul>
@@ -180,23 +180,23 @@ endpoints4s/play
 <p><a href="https://index.scala-lang.org/endpoints4s/play/play-client" title="Artifact play-client"><img src="https://img.shields.io/maven-central/v/org.endpoints4s/play-client_2.13?label=play-client&style=for-the-badge" title="Artifact coordinates" /></a></p>
 <p><a href="api/endpoints4s/play/client/index.html" title="endpoints4s.play.client"><code>API documentation</code></a></p>
 <p>The <code>Endpoints</code> interpreter fixes the <code>Endpoint[A, B]</code> type to a function from <code>A</code> to <code>Future[B]</code>:</p>
-<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v6.0.0/client/src/main/scala/endpoints4s/play/client/Endpoints.scala#L261-L262" target="_blank" title="Go to snippet source">source</a><code class="language-scala">case class Endpoint[A, B](request: Request[A], response: Response[B])
+<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v7.0.0/client/src/main/scala/endpoints4s/play/client/Endpoints.scala#L261-L262" target="_blank" title="Go to snippet source">source</a><code class="language-scala">case class Endpoint[A, B](request: Request[A], response: Response[B])
     extends (A =&gt; Future[B])</code></pre>
 <p>This means that, given the following endpoint definition:</p>
-<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v6.0.0/client/src/test/scala/endpoints4s/play/client/EndpointsDocs.scala#L9-L10" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val someResource: Endpoint[Int, String] =
+<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v7.0.0/client/src/test/scala/endpoints4s/play/client/EndpointsDocs.scala#L9-L10" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val someResource: Endpoint[Int, String] =
   endpoint(get(path / &quot;some-resource&quot; / segment[Int]()), ok(textResponse))</code></pre>
 <p>It can be invoked as follows:</p>
-<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v6.0.0/client/src/test/scala/endpoints4s/play/client/EndpointsDocs.scala#L16" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val eventuallyString: Future[String] = someResource(42)</code></pre>
+<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v7.0.0/client/src/test/scala/endpoints4s/play/client/EndpointsDocs.scala#L16" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val eventuallyString: Future[String] = someResource(42)</code></pre>
 <h2><a href="#server" name="server" class="anchor"><span class="anchor-link"></span></a>Server</h2>
 <p><a href="https://index.scala-lang.org/endpoints4s/play/play-server" title="Artifact play-server"><img src="https://img.shields.io/maven-central/v/org.endpoints4s/play-server_2.13?label=play-server&style=for-the-badge" title="Artifact coordinates" /></a></p>
 <p><a href="api/endpoints4s/play/server/index.html" title="endpoints4s.play.server"><code>API documentation</code></a></p>
 <h3><a href="#endpoints" name="endpoints" class="anchor"><span class="anchor-link"></span></a><code>Endpoints</code></h3>
 <p>The <code>Endpoints</code> interpreter provides a <code>routesFromEndpoints</code> operation that turns a sequence of endpoints with their implementation into a <code>play.api.routing.Router.Routes</code> value that can be integrated to your Play application.</p>
 <p>For instance, given the following endpoint definition:</p>
-<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v6.0.0/server/src/test/scala/endpoints4s/play/server/EndpointsDocs.scala#L8-L9" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val someResource: Endpoint[Int, String] =
+<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v7.0.0/server/src/test/scala/endpoints4s/play/server/EndpointsDocs.scala#L8-L9" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val someResource: Endpoint[Int, String] =
   endpoint(get(path / &quot;some-resource&quot; / segment[Int]()), ok(textResponse))</code></pre>
 <p>It can be implemented as follows:</p>
-<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v6.0.0/server/src/test/scala/endpoints4s/play/server/EndpointsDocs.scala#L15-L18" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val routes: Router.Routes =
+<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v7.0.0/server/src/test/scala/endpoints4s/play/server/EndpointsDocs.scala#L15-L18" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val routes: Router.Routes =
   routesFromEndpoints(
     someResource.implementedBy(x =&gt; s&quot;Received $x&quot;)
   )</code></pre>
@@ -217,10 +217,10 @@ endpoints4s/play
 <h3><a href="#chunkedentities" name="chunkedentities" class="anchor"><span class="anchor-link"></span></a><code>ChunkedEntities</code></h3>
 <p>The <code>ChunkedEntities</code> interpreter fixes the type <code>Chunks[A]</code> to <code>akka.stream.scaladsl.Source[A, _]</code>.</p>
 <p>For instance, given the following chunked endpoint definition:</p>
-<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v6.0.0/server/src/test/scala/endpoints4s/play/server/ChunkedEntitiesDocs.scala#L10-L11" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val logo: Endpoint[Unit, Chunks[Array[Byte]]] =
+<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v7.0.0/server/src/test/scala/endpoints4s/play/server/ChunkedEntitiesDocs.scala#L10-L11" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val logo: Endpoint[Unit, Chunks[Array[Byte]]] =
   endpoint(get(path / &quot;logo.png&quot;), ok(bytesChunksResponse))</code></pre>
 <p>It can be implemented as follows:</p>
-<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v6.0.0/server/src/test/scala/endpoints4s/play/server/ChunkedEntitiesDocs.scala#L17-L23" target="_blank" title="Go to snippet source">source</a><code class="language-scala">import org.apache.pekko.stream.scaladsl.FileIO
+<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/endpoints4s/play/tree/v7.0.0/server/src/test/scala/endpoints4s/play/server/ChunkedEntitiesDocs.scala#L17-L23" target="_blank" title="Go to snippet source">source</a><code class="language-scala">import org.apache.pekko.stream.scaladsl.FileIO
 import java.nio.file.Paths
 
 val logoHandler =
@@ -237,13 +237,13 @@ val logoHandler =
 <p>If an exception is thrown during request decoding, or when running the business logic, or when encoding the response, endpoints4s returns an “Internal Server Error” (500) response reporting the error in a JSON array. You can change this behavior by overriding the <a href="api/endpoints4s/play/server/Endpoints.html" title="endpoints4s.play.server.Endpoints"><code>handleServerError</code></a> method.</p>
 </div>
 <div>
-<a href="https://github.com/endpoints4s/play/tree/v6.0.0/documentation/src/main/paradox/index.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/endpoints4s/play/tree/v7.0.0/documentation/src/main/paradox/index.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-6.0.0
+7.0.0
 </span>
 </div>
 </article>
